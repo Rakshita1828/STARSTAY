@@ -1,0 +1,20 @@
+# Use Node.js as a base image
+FROM node:16
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the package.json and package-lock.json to install dependencies
+COPY hotel-user/package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the frontend source code
+COPY hotel-user/ .
+
+# Expose the port React Native uses for bundling
+EXPOSE 8081
+
+# Start the app in React Native mode
+CMD ["npm", "start"]
