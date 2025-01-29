@@ -12,6 +12,7 @@ const BookingScreen = ({ navigation, onLogout }: any) => {
 
   useEffect(() => {
     if (selectedDate) {
+      
       fetchAvailableHotels(selectedDate);
     }
   }, [selectedDate]);
@@ -19,7 +20,8 @@ const BookingScreen = ({ navigation, onLogout }: any) => {
   const fetchAvailableHotels = async (date: Date) => {
     setLoading(true);
     try {
-      const formattedDate = date.toISOString().split('T')[0];
+      const formattedDate = date.toLocaleDateString('en-CA');
+      console.log(formattedDate);
       const response = await api.get(`/hotels?date=${formattedDate}`);
       setAvailableHotels(response.data);
     } catch (error) {
@@ -43,11 +45,12 @@ const BookingScreen = ({ navigation, onLogout }: any) => {
     try {
       await api.post('/bookings', {
         hotelId: selectedHotel._id,
-        bookingDate: selectedDate.toISOString(),
+        bookingDate: selectedDate.toLocaleDateString('en-CA'),
       });
 
       Alert.alert('Booking successful');
-      fetchAvailableHotels(selectedDate); // Refresh available hotels after booking
+      fetchAvailableHotels(selectedDate);
+      setSelectedHotel(null); // Refresh available hotels after booking
     } catch (error) {
       Alert.alert('Booking failed', 'An unexpected error occurred');
     }

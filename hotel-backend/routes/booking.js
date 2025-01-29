@@ -24,7 +24,7 @@ router.post('/', authenticateToken, async (req, res) => {
   const { hotelId, bookingDate } = req.body; // Only hotelId and bookingDate are required
 
   try {
-    const existingBooking = await Booking.findOne({ hotel: hotelId, bookingDate });
+    const existingBooking = await Booking.findOne({ hotel: hotelId, bookingDate: bookingDate });
     if (existingBooking) {
       return res.status(400).json({ error: 'Hotel already booked for this date' });
     }
@@ -33,7 +33,7 @@ router.post('/', authenticateToken, async (req, res) => {
     const booking = new Booking({
       user: req.user.id, // Extracted from the token
       hotel: hotelId,
-      bookingDate,
+      bookingDate: bookingDate
     });
 
     await booking.save();
