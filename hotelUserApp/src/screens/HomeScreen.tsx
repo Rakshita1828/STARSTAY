@@ -1,27 +1,24 @@
 import React from 'react';
-import { View, Button, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import HomeScreenStyles from './HomeScreenStyles';
 
 const HomeScreen = ({ navigation }: any) => {
   return (
-    <View style={styles.container}>
-      <Button
-        title="Login"
-        onPress={() => navigation.navigate('Login')} // Navigate to LoginScreen
-      />
-      <Button
-        title="Register"
-        onPress={() => navigation.navigate('Registration')} // Navigate to RegistrationScreen
-      />
+    <View style={HomeScreenStyles.container}>
+      <TouchableOpacity
+        style={HomeScreenStyles.button}
+        onPress={() => navigation.navigate('Login')}
+      >
+        <Text style={HomeScreenStyles.buttonText}>Login</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={HomeScreenStyles.button}
+        onPress={() => navigation.navigate('Register')}
+      >
+        <Text style={HomeScreenStyles.buttonText}>Register</Text>
+      </TouchableOpacity>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
 
 export default HomeScreen;

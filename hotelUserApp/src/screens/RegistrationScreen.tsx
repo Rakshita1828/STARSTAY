@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Alert } from 'react-native';
+import { View, TextInput, Text, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import api from '../utils/api';
 import axios, { AxiosError } from 'axios';  // Import axios and AxiosError
+import RegistrationScreenStyle from './RegistrationScreenStyle';
 
 const RegistrationScreen = ({ navigation }: any) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading]= useState(false);
 
   const handleRegister = async () => {
+    setLoading(true);
     try {
       console.log('Sending data:', { username, password });
       const response = await api.post('/auth/register', { username, password });
@@ -23,23 +26,34 @@ const RegistrationScreen = ({ navigation }: any) => {
         Alert.alert('Registration failed', 'An unexpected error occurred');
       }
     }
+    finally{
+      setLoading(false);
+    }
   };
   
 
   return (
-    <View>
+    <View style={RegistrationScreenStyle.container}>
       <TextInput
+      style={RegistrationScreenStyle.input}
         placeholder="Username"
         value={username}
         onChangeText={setUsername}
       />
       <TextInput
+      style={RegistrationScreenStyle.input}
         placeholder="Password"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Register" onPress={handleRegister} />
+       {loading ? (
+        <ActivityIndicator />
+      ) : (
+        <TouchableOpacity style={RegistrationScreenStyle.button} onPress={handleRegister}>
+          <Text style={RegistrationScreenStyle.buttonText}>Register</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

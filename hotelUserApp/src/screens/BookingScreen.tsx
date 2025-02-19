@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, Alert, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, Button, Alert, FlatList, ActivityIndicator, Image, TouchableOpacity } from 'react-native';
 import api from '../utils/api';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import styles from './BookingScreenStyle';
 
 const BookingScreen = ({ navigation, onLogout }: any) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -12,7 +13,6 @@ const BookingScreen = ({ navigation, onLogout }: any) => {
 
   useEffect(() => {
     if (selectedDate) {
-      
       fetchAvailableHotels(selectedDate);
     }
   }, [selectedDate]);
@@ -21,7 +21,6 @@ const BookingScreen = ({ navigation, onLogout }: any) => {
     setLoading(true);
     try {
       const formattedDate = date.toLocaleDateString('en-CA');
-      console.log(formattedDate);
       const response = await api.get(`/hotels?date=${formattedDate}`);
       setAvailableHotels(response.data);
     } catch (error) {
@@ -36,12 +35,10 @@ const BookingScreen = ({ navigation, onLogout }: any) => {
       Alert.alert('Please select a date');
       return;
     }
-
     if (!selectedHotel) {
       Alert.alert('Please select a hotel');
       return;
     }
-
     try {
       await api.post('/bookings', {
         hotelId: selectedHotel._id,
@@ -50,7 +47,7 @@ const BookingScreen = ({ navigation, onLogout }: any) => {
 
       Alert.alert('Booking successful');
       fetchAvailableHotels(selectedDate);
-      setSelectedHotel(null); // Refresh available hotels after booking
+      setSelectedHotel(null); 
     } catch (error) {
       Alert.alert('Booking failed', 'An unexpected error occurred');
     }
@@ -58,9 +55,11 @@ const BookingScreen = ({ navigation, onLogout }: any) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Booking Screen</Text>
-
-      <Button title="Select Date" onPress={() => setShowDatePicker(true)} />
+      <Button
+        title="Select Date"
+        onPress={() => setShowDatePicker(true)}
+        color="#D1A843"
+      />
       {showDatePicker && (
         <DateTimePicker
           value={selectedDate || new Date()}
@@ -74,7 +73,6 @@ const BookingScreen = ({ navigation, onLogout }: any) => {
           }}
         />
       )}
-
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
@@ -86,47 +84,39 @@ const BookingScreen = ({ navigation, onLogout }: any) => {
               <Text style={styles.hotelName}>{item.name}</Text>
               <Text>{item.location}</Text>
               <Text>Price: ${item.pricePerNight}</Text>
-              <Button
-                title="Select Hotel"
+              <TouchableOpacity
+                style={[
+                  styles.selectButton,
+                  selectedHotel?._id === item._id && styles.selectedButton,
+                ]}
                 onPress={() => setSelectedHotel(item)}
-                color={selectedHotel?._id === item._id ? '#FF6347' : '#0000ff'}
-              />
+              >
+                <Text style={styles.buttonText}>Select Room</Text>
+              </TouchableOpacity>
             </View>
           )}
         />
       )}
-
-      <Button title="Book Hotel" onPress={handleBooking} disabled={loading} />
-      <Button title="Booking History" onPress={() => navigation.navigate('BookingHistory')} />
-      <Button title="Logout" onPress={() => onLogout(navigation)} />
+      <View style={{ marginTop: 20 }}>
+        <Button
+          title="Book Hotel"
+          onPress={handleBooking}
+          color="#D1A843"
+        />
+        <View style={{ marginVertical: 10 }} />
+        <Button
+          title="Booking History"
+          onPress={() => navigation.navigate('BookingHistory')}
+          color="#D1A843"
+        />
+        <View style={{ marginVertical: 10 }} />
+        <Button
+          title="Logout"
+          onPress={() => onLogout(navigation)}
+          color="#D1A843"
+        />
+      </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    flex: 1,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  card: {
-    padding: 10,
-    marginBottom: 10,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 3,
-  },
-  hotelName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-});
-
 export default BookingScreen;
