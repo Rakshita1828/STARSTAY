@@ -1,4 +1,4 @@
-# STARSTAY Project
+# STARSTAY PROJECT
 
 ## Overview
 `STARSTAY` is a hotel booking application built using **React Native** for the frontend and **Node.js** for the backend. It features hotel booking, login functionality, and booking history for users. The project includes two main parts:
